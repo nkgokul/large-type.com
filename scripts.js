@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function () {
     "use strict";
 
     var WELCOME_MSG = '*hello*';
@@ -13,8 +13,9 @@ window.addEventListener('DOMContentLoaded', function() {
 
     function updateFragment(text) {
         // Don't spam the browser history & strip query strings.
-        window.location.replace(location.origin + '/#' + encodeURIComponent(text));
-        shareLinkField.value = location.origin + '/' + location.hash;
+        text = text.substring(text.length - 10);
+        window.location.replace(location + '/#' + encodeURIComponent(text));
+        shareLinkField.value = location + '/' + location.hash;
     }
 
     function clearChars() {
@@ -30,7 +31,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
         clearChars();
 
-        text.split('').forEach(function(chr) {
+        text.split('').forEach(function (chr) {
             var charbox = charboxTemplate.content.cloneNode(true);
             var charElem = charbox.querySelector('.char');
             charElem.style.fontSize = fontSize + 'vw';
@@ -63,7 +64,12 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     function onInput(evt) {
-        updateFragment(evt.target.value);
+        if (evt.keyCode === 27 || evt.keyCode === 13) {
+            updateFragment('');
+            renderText();
+        } else {
+            updateFragment(evt.target.value);
+        }
     }
 
     function enterInputMode(evt) {
@@ -108,10 +114,17 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     function initAnalytics() {
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
         ga('set', 'anonymizeIp', true);
         ga('create', 'UA-37242602-2', 'auto');
@@ -119,27 +132,27 @@ window.addEventListener('DOMContentLoaded', function() {
 
         window.twttr = window.twttr || {
             _e: [],
-            ready: function(f) {
+            ready: function (f) {
                 this._e.push(f);
             }
         };
 
         twttr.ready(function (twttr) {
-            twttr.events.bind('follow', function(event) {
+            twttr.events.bind('follow', function (event) {
                 ga('send', 'event', 'twitter', 'follow');
             });
-            twttr.events.bind('tweet', function(event) {
+            twttr.events.bind('tweet', function (event) {
                 ga('send', 'event', 'twitter', 'tweet');
             });
         });
     }
 
-    document.querySelector('.js-help-button').addEventListener('click', function(evt) {
+    document.querySelector('.js-help-button').addEventListener('click', function (evt) {
         evt.preventDefault();
         showModal('.js-help-modal');
     }, false);
 
-    document.querySelector('.js-share-button').addEventListener('click', function(evt) {
+    document.querySelector('.js-share-button').addEventListener('click', function (evt) {
         evt.preventDefault();
         showModal('.js-share-modal');
 
